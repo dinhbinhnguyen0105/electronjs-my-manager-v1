@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require("path");
+const fs = require("fs");
 const ROOT_DIR = process.cwd();
 
 function createMainWindow() {
@@ -14,7 +15,7 @@ function createMainWindow() {
             devTools: true,
         },
     });
-    win.loadFile(path.join(ROOT_DIR, "renderer", "src", "index.html"));
+    win.loadFile(path.join(ROOT_DIR, "renderer", "index.html"));
     return win;
 }
 
@@ -35,6 +36,10 @@ app.whenReady().then(() => {
         }
     });
 
+    mainWindow.webContents.once("did-finish-load", () => {
+        mainWindow.webContents.send("message", { message : "Hello from main process" });
+    });
+
     ipcMain.on("request-data", (event, args) => {
         if(args.page.toLowerCase() === "robot-page") {
             switch(args.content.toLowerCase()) {
@@ -46,5 +51,8 @@ app.whenReady().then(() => {
         }
         else if(args.page.toLowerCase() === "store-page") {}
     })
-
 });
+
+function initComponent(componentName) {
+    sidebar store page ...
+}
