@@ -27,5 +27,25 @@ app.whenReady().then(() => {
     app.on("window-all-closed", function () {
         if (process.platform !== "darwin") app.quit();
     });
+    ipcMain.on("request-page", (event, componentName) => {
+        const responsePage = {};
+        const pageDir = path.join(ROOT_DIR, "main", "pages");
+        switch(componentName.toLowerCase()) {
+            case "store":
+                const storePageDir = path.join(pageDir, "store");
+                responsePage.html = fs.readFileSync(path.join(storePageDir, "store.html"), "utf-8");
+                responsePage.js = fs.readFileSync(path.join(storePageDir, "store.js"), "utf-8");
+                responsePage.css = fs.readFileSync(path.join(storePageDir, "store.css"), "utf-8");
+                break;
+            case "robot":
+                const robotPageDir = path.join(pageDir, "robot");
+                responsePage.html = fs.readFileSync(path.join(robotPageDir, "robot.html"), "utf-8");
+                responsePage.js = fs.readFileSync(path.join(robotPageDir, "robot.js"), "utf-8");
+                responsePage.css = fs.readFileSync(path.join(robotPageDir, "robot.css"), "utf-8");
+                break;
 
+            default: throw new Error("Invalid component name");
+        }
+        event.sender.send("response-page", responsePage);
+    })
 });
